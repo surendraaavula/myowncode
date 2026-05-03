@@ -1,0 +1,9 @@
+<html>
+<head>
+    <title>Simple Web App</title>
+</head>
+<body>
+    <h2>Welcome to Simple Java Web App 🚀</h2>
+    <a href="hello">Click here to call Servlet</a>
+</body>
+</html>
