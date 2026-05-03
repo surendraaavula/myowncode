@@ -1,19 +1,78 @@
-package com.example;
+import java.util.Scanner;
 
-import java.io.IOException;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+public class ChessGame {
 
-public class HelloServlet extends HttpServlet {
+    static String[][] board = new String[8][8];
+    static boolean whiteTurn = true;
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public static void main(String[] args) {
+        initializeBoard();
+        printBoard();
 
-        response.setContentType("text/html");
+        Scanner sc = new Scanner(System.in);
 
-        response.getWriter().println(
-            "<h1>Hello from Java Web App deployed via Tomcat!</h1>"
-        );
+        while (true) {
+            System.out.println((whiteTurn ? "White" : "Black") + " move (format: fromRow fromCol toRow toCol):");
+
+            int fromRow = sc.nextInt();
+            int fromCol = sc.nextInt();
+            int toRow = sc.nextInt();
+            int toCol = sc.nextInt();
+
+            if (isValidMove(fromRow, fromCol, toRow, toCol)) {
+                makeMove(fromRow, fromCol, toRow, toCol);
+                whiteTurn = !whiteTurn;
+                printBoard();
+            } else {
+                System.out.println("Invalid move! Try again.");
+            }
+        }
+    }
+
+    static void initializeBoard() {
+        // Black pieces
+        board[0] = new String[]{"bR","bN","bB","bQ","bK","bB","bN","bR"};
+        board[1] = new String[]{"bP","bP","bP","bP","bP","bP","bP","bP"};
+
+        // Empty squares
+        for (int i = 2; i < 6; i++) {
+            board[i] = new String[]{"--","--","--","--","--","--","--","--"};
+        }
+
+        // White pieces
+        board[6] = new String[]{"wP","wP","wP","wP","wP","wP","wP","wP"};
+        board[7] = new String[]{"wR","wN","wB","wQ","wK","wB","wN","wR"};
+    }
+
+    static void printBoard() {
+        System.out.println("\n  0  1  2  3  4  5  6  7");
+        for (int i = 0; i < 8; i++) {
+            System.out.print(i + " ");
+            for (int j = 0; j < 8; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    static boolean isValidMove(int fr, int fc, int tr, int tc) {
+        if (fr < 0 || fr > 7 || fc < 0 || fc > 7 || tr < 0 || tr > 7 || tc < 0 || tc > 7)
+            return false;
+
+        String piece = board[fr][fc];
+
+        if (piece.equals("--")) return false;
+
+        // Check turn
+        if (whiteTurn && piece.charAt(0) != 'w') return false;
+        if (!whiteTurn && piece.charAt(0) != 'b') return false;
+
+        return true; // basic validation only (can expand rules later)
+    }
+
+    static void makeMove(int fr, int fc, int tr, int tc) {
+        board[tr][tc] = board[fr][fc];
+        board[fr][fc] = "--";
     }
 }
